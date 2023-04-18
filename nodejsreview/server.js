@@ -1,22 +1,36 @@
 const express = require("express");
 const app = express();
 const connectDB = require("./config/db");
-const Hero = require("./models/heroModel");
+const Persona = require("./models/persona");
 
 connectDB();
 
 app.use(express.json());
 
-app.get("/superheroes", async (req, res) => {
+app.post("/personas", async (req, res) => {
   try {
-    const heroes = await Hero.find({});
+    await Persona.create({
+      cedula: req.body.cedula,
+      nombre: req.body.nombre,
+      telefono: req.body.telefono,
+    });
+
+    res.json({ msg: "Persona creada!"});
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+app.get("/personas", async (req, res) => {
+  try {
+    const heroes = await Persona.find({});
     res.json(heroes);
   } catch (error) {
     console.log(error);
   }
 });
 
-app.get("/superheroes/:superheroesID", async (req, res) => {
+app.get("/personas/:personaID", async (req, res) => {
   try {
     const hero = await Hero.findById(req.params.superheroesID);
     res.json(hero);
@@ -25,35 +39,22 @@ app.get("/superheroes/:superheroesID", async (req, res) => {
   }
 });
 
-app.post("/superheroes", async (req, res) => {
+app.put("/personas/:personaID", async (req, res) => {
   try {
-    await Hero.create({
+    await Persona.findByIdAndUpdate(req.params.superheroesID, {
       superheroename: req.body.superheroename,
       name: req.body.name,
     });
-
-    res.json({ msg: "Superheroe created!" });
+    res.json({ msg: "Persona actualizada!" });
   } catch (error) {
     console.log(error);
   }
 });
 
-app.put("/superheroes/:superheroesID", async (req, res) => {
+app.delete("/personas/:personaID", async (req, res) => {
   try {
-    await Hero.findByIdAndUpdate(req.params.superheroesID, {
-      superheroename: req.body.superheroename,
-      name: req.body.name,
-    });
-    res.json({ msg: "Superheroe updated!" });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-app.delete("/superheroes/:superheroesID", async (req, res) => {
-  try {
-    await Hero.findByIdAndDelete(req.params.superheroesID);
-    res.json({ msg: "Superheroe deleted!" });
+    await Persona.findByIdAndDelete(req.params.superheroesID);
+    res.json({ msg: "Persona eliminada!" });
   } catch (error) {
     console.log(error);
   }
